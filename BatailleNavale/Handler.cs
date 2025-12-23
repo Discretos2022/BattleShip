@@ -1,4 +1,5 @@
 ﻿using BatailleNavale;
+using BattleShip.NetCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,11 +17,16 @@ namespace BattleShip
 
         public static List<ShipBase> ships = new List<ShipBase>();
 
+        public static bool isEnemyReady = false;
+
         public static void Initialize()
         {
             //solids = new List<Solid>();
 
             ships = new List<ShipBase>();
+
+            if (!NetPlay.IsMultiplaying)
+                isEnemyReady = true;
 
         }
 

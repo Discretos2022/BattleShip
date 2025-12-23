@@ -24,6 +24,8 @@ namespace BattleShip
         public static Texture2D SelectedCase;
         public static Texture2D CaseIcon;
 
+        public static Texture2D DashBoard;
+
         public static Texture2D AircraftCarrier;
         public static Texture2D Submarine;
         public static Texture2D Destroyer;
@@ -132,6 +134,8 @@ namespace BattleShip
             Grid = Content.Load<Texture2D>("Images\\Grid");
             SelectedCase = Content.Load<Texture2D>("Images\\SelectedCase");
             CaseIcon = Content.Load<Texture2D>("Images\\CaseIcon");
+
+            DashBoard = Content.Load<Texture2D>("Images\\DashBoard");
 
             AircraftCarrier = Content.Load<Texture2D>("Images\\AircraftCarrier");
             Submarine = Content.Load<Texture2D>("Images\\Submarine");

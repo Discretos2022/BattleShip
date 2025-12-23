@@ -3,11 +3,13 @@ using INPUT;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using NetworkEngine_5._0.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WRITER;
 
 namespace BattleShip
 {
@@ -22,6 +24,11 @@ namespace BattleShip
         private Rectangle[,] cases = new Rectangle[10, 10];
 
         private List<ShipBase> shipsToPlace = new List<ShipBase>();
+
+        private string textQueue = "place tes navires";
+        private int textTime = 0;
+        private int maxTime = 5;
+        private string textLCD = "";
 
 
         public Play(Main main)
@@ -118,22 +125,6 @@ namespace BattleShip
                     }
                 }
 
-                //float PositionX = Main.ScreenWidth / 2 - (177 * 4 + 177 * 4 + 40) / 2;
-                //float PositionY = Main.ScreenHeight / 2 - (177 * 4) / 2;
-                //Vector2 pos = new Vector2(PositionX + 177 * 4 + 40, PositionY);
-
-                //for (int i = 0; i < cases.GetLength(0); i++)
-                //{
-                //    for (int j = 0; j < cases.GetLength(1); j++)
-                //    {
-                //        if ((new Rectangle((int)pos.X + (i+1)*64, (int)pos.Y + (j+1)*64, 64, 64)).Intersects(MouseInput.GetRectangle(screen)))
-                //        {
-                //            Console.WriteLine("click");
-                //        }
-
-                //    }
-                //}
-
             }
 
             if (MouseInput.isSimpleClickRight())
@@ -170,6 +161,20 @@ namespace BattleShip
             }
 
 
+            textTime += 1;
+
+            if (textTime == maxTime)
+            {
+                if (textQueue.Length > 0)
+                {
+                    textLCD += textQueue[0];
+                    textQueue = textQueue.Substring(1);
+                }
+
+                textTime = 0;
+            }
+
+
         }
 
         public void DrawInCamera(SpriteBatch spriteBatch, GameTime gameTime)
@@ -202,6 +207,9 @@ namespace BattleShip
             float PositionX = Main.ScreenWidth / 2 - (177 * scale + 177 * scale + Space) / 2;
             float PositionY = Main.ScreenHeight / 2 - (177 * scale) / 2;
 
+            spriteBatch.Draw(Main.DashBoard, new Vector2(Main.ScreenWidth / 2 - (200 * 4 / 2), 20), null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            //Writer.DrawText(Main.UltimateFont, textLCD, new Vector2(Main.ScreenWidth / 2 - (200 * 4 / 2), 20), Color.Green, Color.Green, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0f, spriteBatch);
+            spriteBatch.DrawString(Main.UltimateFont, textLCD, new Vector2(Main.ScreenWidth / 2 - (200 * 4 / 2) + 40, 35), new Color(0, 220, 70), 0f, Vector2.Zero, 4f, SpriteEffects.None, 0f);
 
             spriteBatch.Draw(Main.Grid, new Vector2(PositionX, PositionY), null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
@@ -399,6 +407,27 @@ namespace BattleShip
 
             shipsToPlace.RemoveAt(0);
 
+            if (IsAllShipArePlaced())
+            {
+
+                if (!Handler.isEnemyReady)
+                    SetTextLCD("attente . . .");
+
+                ClientSender.SendAllShipsArePlaced();
+            }
+
+        }
+
+        public bool IsAllShipArePlaced()
+        {
+            return shipsToPlace.Count == 0;
+        }
+
+
+        public void SetTextLCD(string text)
+        {
+            textLCD = "";
+            textQueue = text;
         }
 
     }

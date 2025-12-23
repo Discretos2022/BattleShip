@@ -40,9 +40,9 @@ namespace BatailleNavale
             if (!isPlaced)
             {
                 if (canPlace)
-                    spriteBatch.Draw(Main.Submarine, position + new Vector2(32 + fixPlacementRotationX, 32 + fixPlacementRotationY), null, Color.White * 0.5f, (float)angle, new Vector2(23, 15 / 2), 4f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Main.Submarine, position + new Vector2(32 + fixPlacementRotationX, 32 + fixPlacementRotationY), null, Color.White * 0.8f, (float)angle, new Vector2(23, 15 / 2), 4f, SpriteEffects.None, 0f);
                 else
-                    spriteBatch.Draw(Main.Submarine, position + new Vector2(32 + fixPlacementRotationX, 32 + fixPlacementRotationY), null, Color.Red * 0.5f, (float)angle, new Vector2(23, 15 / 2), 4f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Main.Submarine, position + new Vector2(32 + fixPlacementRotationX, 32 + fixPlacementRotationY), null, Color.Red * 0.8f, (float)angle, new Vector2(23, 15 / 2), 4f, SpriteEffects.None, 0f);
             }
             else
                 spriteBatch.Draw(Main.Submarine, position + new Vector2(32 + fixPlacementRotationX, 32 + fixPlacementRotationY), null, Color.White, (float)angle, new Vector2(23, 15 / 2), 4f, SpriteEffects.None, 0f);

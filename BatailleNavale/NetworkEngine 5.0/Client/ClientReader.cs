@@ -23,6 +23,7 @@ namespace NetworkEngine_5._0.Client
                 case NetPlay.PacketType.startGame:
 
                     Main.gameState = GameState.Playing;
+                    Handler.Initialize();
 
                     break;
 

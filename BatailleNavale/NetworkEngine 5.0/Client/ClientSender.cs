@@ -16,7 +16,12 @@ namespace NetworkEngine_5._0.Client
         //    Client.SendTCP(packet);
         //}
 
-        
+        public static void SendAllShipsArePlaced()
+        {
+            string packet = CreateTCPpacket("", NetPlay.PacketType.allShipsArePlaced);
+            Client.SendTCP(packet);
+        }
+
 
 
 

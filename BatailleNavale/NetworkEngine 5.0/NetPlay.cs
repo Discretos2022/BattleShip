@@ -37,6 +37,7 @@ namespace BattleShip.NetCore
             None = 0,
             playerID = 1,
             startGame = 2,
+            allShipsArePlaced = 3,
         }
 
         public static int MyPlayerID()

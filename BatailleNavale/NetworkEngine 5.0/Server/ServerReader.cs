@@ -1,11 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using BattleShip;
+﻿using BattleShip;
 using BattleShip.NetCore;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NetworkEngine_5._0.Server
 {
@@ -20,27 +22,33 @@ namespace NetworkEngine_5._0.Server
             switch (packetID)
             {
 
-                //case NetPlay.PacketType.distroyedObject:
+                case NetPlay.PacketType.allShipsArePlaced:
 
-                //    int index = int.Parse(GetDataTCP(packet));
+                    Handler.isEnemyReady = true;
 
-                //    if (index < Handler.actors.Count && index >= 0)
-                //    {
-                //        if (Handler.actors[index].actorType == Actor.ActorType.Item)
-                //            Main.Money += (int)((ItemV2)Handler.actors[index]).ID;
-                //        if (Handler.actors[index].actorType == Actor.ActorType.Object)
-                //            if (((ObjectV2)Handler.actors[index]).objectID == ObjectV2.ObjectID.coin)
-                //                Main.Money += 1;
+                    break;
 
-                //        ServerSender.SendDistroyedObject(index, sender);
+                    //case NetPlay.PacketType.distroyedObject:
 
-                //        LightManager.lights.Remove(Handler.actors[index].light);
-                //        Handler.actors.RemoveAt(index);
-                //    }
+                    //    int index = int.Parse(GetDataTCP(packet));
 
-                //    break;
+                    //    if (index < Handler.actors.Count && index >= 0)
+                    //    {
+                    //        if (Handler.actors[index].actorType == Actor.ActorType.Item)
+                    //            Main.Money += (int)((ItemV2)Handler.actors[index]).ID;
+                    //        if (Handler.actors[index].actorType == Actor.ActorType.Object)
+                    //            if (((ObjectV2)Handler.actors[index]).objectID == ObjectV2.ObjectID.coin)
+                    //                Main.Money += 1;
 
-                
+                    //        ServerSender.SendDistroyedObject(index, sender);
+
+                    //        LightManager.lights.Remove(Handler.actors[index].light);
+                    //        Handler.actors.RemoveAt(index);
+                    //    }
+
+                    //    break;
+
+
 
 
             }

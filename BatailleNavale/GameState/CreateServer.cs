@@ -140,6 +140,7 @@ namespace BattleShip
                 {
                     ServerSender.SendStartGame();
                     Main.gameState = GameState.Playing;
+                    Handler.Initialize();
                 }
 
             }
