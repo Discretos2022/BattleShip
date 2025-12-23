@@ -15,6 +15,7 @@ namespace BatailleNavale
         public int[,] shipCase;
         public Vector2 center;
         public bool canPlace;
+        public bool isPlaced;
         public double angle = 0;
 
         public ShipBase(Vector2 position) 
@@ -34,9 +35,21 @@ namespace BatailleNavale
         public void RotateRight()
         {
 
-            center = new Vector2(center.Y, center.X);
-
             angle += Math.PI / 2;
+
+            Console.WriteLine("\n--------------------------");
+            Console.WriteLine(center);
+
+            if (angle == Math.PI / 2)
+                center = new Vector2(center.Y, center.X);
+            else if (angle == Math.PI)
+                center = new Vector2(shipCase.GetLength(0) - 1 - center.Y, center.X);
+            else if (angle == Math.PI + Math.PI / 2)
+                center = new Vector2(center.Y, center.X);
+            else if (angle == Math.PI * 2)
+                center = new Vector2(shipCase.GetLength(0) - 1 - center.Y, center.X);
+
+            Console.WriteLine(center);
 
             if (angle == 2 * Math.PI) angle = 0;
             if (angle < 0) angle = Math.PI + Math.PI / 2;

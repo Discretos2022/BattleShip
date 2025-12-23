@@ -25,6 +25,9 @@ namespace BattleShip
         public static Texture2D CaseIcon;
 
         public static Texture2D AircraftCarrier;
+        public static Texture2D Submarine;
+        public static Texture2D Destroyer;
+        public static Texture2D PatrolBoat;
 
         public static Texture2D IPBox;
         public static Texture2D PortBox;
@@ -131,6 +134,9 @@ namespace BattleShip
             CaseIcon = Content.Load<Texture2D>("Images\\CaseIcon");
 
             AircraftCarrier = Content.Load<Texture2D>("Images\\AircraftCarrier");
+            Submarine = Content.Load<Texture2D>("Images\\Submarine");
+            Destroyer = Content.Load<Texture2D>("Images\\Destroyer");
+            PatrolBoat = Content.Load<Texture2D>("Images\\PatrolBoat");
 
             IPBox = Content.Load<Texture2D>("Images\\Interface\\IPBox");
             PortBox = Content.Load<Texture2D>("Images\\Interface\\PortBox");

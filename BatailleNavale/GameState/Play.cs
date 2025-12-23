@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static BattleShip.ButtonV3;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace BattleShip
 {
@@ -23,7 +21,8 @@ namespace BattleShip
 
         private Rectangle[,] cases = new Rectangle[10, 10];
 
-        ShipBase aircraftCarrier = new AircraftCarrier(new Vector2(0, 0));
+        private List<ShipBase> shipsToPlace = new List<ShipBase>();
+
 
         public Play(Main main)
         {
@@ -37,7 +36,11 @@ namespace BattleShip
                 }
             }
 
-            Handler.ships.Add(aircraftCarrier);
+            shipsToPlace.Add(new AircraftCarrier(new Vector2(0, 0)));
+            shipsToPlace.Add(new Submarine(new Vector2(0, 0)));
+            shipsToPlace.Add(new Destroyer(new Vector2(0, 0)));
+            shipsToPlace.Add(new Destroyer(new Vector2(0, 0)));
+            shipsToPlace.Add(new PatrolBoat(new Vector2(0, 0)));
 
         }
 
@@ -46,12 +49,12 @@ namespace BattleShip
 
             Handler.Update(gameTime);
 
-            if (aircraftCarrier != null)
+            if (shipsToPlace.Count > 0)
             {
                 int x = (int)((MouseInput.GetScreenPosition(screen).X - 20) / 64) * 64 + 20; //  - (int)(aircraftCarrier.GetCenter().X * 64)
                 int y = (int)((MouseInput.GetScreenPosition(screen).Y + 6 ) / 64) * 64 - 6;  //  - (int)(aircraftCarrier.GetCenter().Y * 64)
 
-                aircraftCarrier.position = new Vector2(x, y);
+                shipsToPlace[0].position = new Vector2(x, y);
 
 
                 float PositionX = Main.ScreenWidth / 2 - (177 * 4 + 177 * 4 + 40) / 2;
@@ -61,8 +64,32 @@ namespace BattleShip
 
                 if (KeyInput.isSimpleClick(Keys.Right))
                 {
+                    shipsToPlace[0].RotateRight();
+                }
 
-                    aircraftCarrier.RotateRight();
+                if (MouseInput.isSimpleClickLeft())
+                {
+
+                    float PosX = Main.ScreenWidth / 2 - (177 * 4 + 177 * 4 + 40) / 2;
+                    float PosY = Main.ScreenHeight / 2 - (177 * 4) / 2;
+                    Vector2 pos2 = new Vector2(PosX + 177 * 4 + 40, PosY);
+
+                    for (int i = 0; i < shipsCase.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < shipsCase.GetLength(1); j++)
+                        {
+                            if ((new Rectangle((int)pos2.X + (i + 1) * 64, (int)pos2.Y + (j + 1) * 64, 64, 64)).Intersects(MouseInput.GetRectangle(screen)))
+                            {
+
+                                if (CanPlaceShip(shipsCase, shipsToPlace[0], i, j))
+                                {
+                                    PlaceShip(shipsToPlace[0], i, j);
+                                }
+
+                            }
+
+                        }
+                    }
 
                 }
 
@@ -126,6 +153,23 @@ namespace BattleShip
             }
 
 
+            if (KeyInput.isSimpleClick(Keys.Space))
+            {
+
+                Console.Write("\n");
+
+                for (int i = 0; i < shipsCase.GetLength(0); i++)
+                {
+                    for (int j = 0; j < shipsCase.GetLength(1); j++)
+                    {
+                        Console.Write(shipsCase[j, i] + ",");
+                    }
+                    Console.Write("\n");
+                }
+
+            }
+
+
         }
 
         public void DrawInCamera(SpriteBatch spriteBatch, GameTime gameTime)
@@ -178,20 +222,6 @@ namespace BattleShip
 
             }
 
-            float add = 177 * scale + Space;
-            if (new Rectangle((int)PositionX + (int)(16 * scale) + (int)add + 1, (int)PositionY + (int)(16 * scale) + 1, (int)(160 * scale) - 1, (int)(160 * scale) - 1).Intersects(MouseInput.GetRectangle(screen)))
-            {
-
-                float DiffX = PositionX + add;
-                float DiffY = PositionY;
-                vec = new Vector2((MouseInput.GetRectangle(screen).X - DiffX), (MouseInput.GetRectangle(screen).Y - DiffY));
-                vec2 = new Vector2((int)(vec.X / (int)(16 * scale)) * (int)(16 * scale) + DiffX, (int)(vec.Y / (int)(16 * scale)) * (int)(16 * scale) + DiffY); //  + (10 * scale)
-
-                spriteBatch.Draw(Main.SelectedCase, vec2, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-                //Console.WriteLine("S : " + (PositionX - vec2.X) + " / DiffX : " + DiffX + " / scale : " + scale);
-
-            }
-
 
             for (int i = 0; i < 10; i++)
             {
@@ -207,15 +237,14 @@ namespace BattleShip
                 }
             }
 
+            Handler.Draw(spriteBatch, gameTime);
 
-
-            if (aircraftCarrier != null)
+            if (shipsToPlace.Count > 0)
             {
                 //int x = (int)((MouseInput.GetScreenPosition(screen).X - 20) / 64) * 64 + 20 - (int)(aircraftCarrier.GetCenter().X * 64);
                 //int y = (int)((MouseInput.GetScreenPosition(screen).Y + 6) / 64) * 64 - 6 - (int)(aircraftCarrier.GetCenter().Y * 64);
 
                 //aircraftCarrier.position = new Vector2(x, y);
-
 
                 float PosX = Main.ScreenWidth / 2 - (177 * 4 + 177 * 4 + 40) / 2;
                 float PosY = Main.ScreenHeight / 2 - (177 * 4) / 2;
@@ -228,27 +257,42 @@ namespace BattleShip
                         if ((new Rectangle((int)pos.X + (i + 1) * 64, (int)pos.Y + (j + 1) * 64, 64, 64)).Intersects(MouseInput.GetRectangle(screen)))
                         {
 
-                            if (CanPlaceShip(shipsCase, aircraftCarrier, i, j))
+                            if (CanPlaceShip(shipsCase, shipsToPlace[0], i, j))
                             {
-                                aircraftCarrier.canPlace = true;
+                                shipsToPlace[0].canPlace = true;
                                 goto L_end;
                             }
                             else
-                                aircraftCarrier.canPlace = false;
+                                shipsToPlace[0].canPlace = false;
 
                         }
                         else
-                            aircraftCarrier.canPlace = false;
+                            shipsToPlace[0].canPlace = false;
 
                     }
                 }
 
-                L_end:;
+            L_end:;
 
+                shipsToPlace[0].Draw(spriteBatch, gameTime);
 
             }
 
-            Handler.Draw(spriteBatch, gameTime);
+
+            float add = 177 * scale + Space;
+            if (new Rectangle((int)PositionX + (int)(16 * scale) + (int)add + 1, (int)PositionY + (int)(16 * scale) + 1, (int)(160 * scale) - 1, (int)(160 * scale) - 1).Intersects(MouseInput.GetRectangle(screen)))
+            {
+
+                float DiffX = PositionX + add;
+                float DiffY = PositionY;
+                vec = new Vector2((MouseInput.GetRectangle(screen).X - DiffX), (MouseInput.GetRectangle(screen).Y - DiffY));
+                vec2 = new Vector2((int)(vec.X / (int)(16 * scale)) * (int)(16 * scale) + DiffX, (int)(vec.Y / (int)(16 * scale)) * (int)(16 * scale) + DiffY); //  + (10 * scale)
+
+                spriteBatch.Draw(Main.SelectedCase, vec2, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+            }
+
+
 
             //for (int i = 0; i < 10; i++)
             //{
@@ -308,7 +352,7 @@ namespace BattleShip
 
         }
 
-
+        /** Verifie si la navire est plaçable à la position x, y dans la grille */
         public bool CanPlaceShip(int[,] grid, ShipBase ship, int x, int y)
         {
 
@@ -323,12 +367,37 @@ namespace BattleShip
                     if (j - ship.GetCenter().Y + y < 0) return false;
                     if (i - ship.GetCenter().X + x >= grid.GetLength(0)) return false;
                     if (j - ship.GetCenter().Y + y >= grid.GetLength(1)) return false;
+                    if (shipsCase[(int)(i - ship.GetCenter().X + x), (int)(j - ship.GetCenter().Y + y)] != 0) return false;
 
                 }
             }
 
 
             return true;
+
+        }
+
+        /** Place le navire dans la grille */
+        public void PlaceShip(ShipBase ship, int x, int y)
+        {
+            int[,] sg = ship.GetShipCases();
+
+            /// Ajoute le navire à la liste des navires placés
+            Handler.ships.Add(shipsToPlace[0]);
+            shipsToPlace[0].isPlaced = true;
+
+            for (int i = 0; i < sg.GetLength(1); i++)
+            {
+                for (int j = 0; j < sg.GetLength(0); j++)
+                {
+
+                    /// Le numéro placé dans la grille = Position du navire dans la liste
+                    shipsCase[(int)(i - ship.GetCenter().X + x), (int)(j - ship.GetCenter().Y + y)] = Handler.ships.Count;
+
+                }
+            }
+
+            shipsToPlace.RemoveAt(0);
 
         }
 
