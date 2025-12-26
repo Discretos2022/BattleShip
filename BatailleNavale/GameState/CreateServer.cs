@@ -14,7 +14,9 @@ namespace BattleShip
     class CreateServer
     {
 
-        private Main main;
+        private static readonly Lazy<CreateServer> _instance = new(() => new CreateServer());
+        public static CreateServer Instance => _instance.Value;
+
 
         private Color grayColor = new Color(60, 60, 60);
 
@@ -30,10 +32,8 @@ namespace BattleShip
         private Color stateTextColor = Color.White;
 
 
-        public CreateServer(Main main)
+        private CreateServer()
         {
-
-            this.main = main;
 
             textBoxPort = new TextBox();
             PortButton = new ButtonV3();

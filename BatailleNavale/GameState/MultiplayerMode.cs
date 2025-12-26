@@ -15,7 +15,9 @@ namespace BattleShip
     class MultiplayerMode
     {
 
-        private Main main;
+        private static readonly Lazy<MultiplayerMode> _instance = new(() => new MultiplayerMode());
+        public static MultiplayerMode Instance => _instance.Value;
+
 
         private ButtonV3 createServer;
         private ButtonV3 joinServer;
@@ -23,10 +25,8 @@ namespace BattleShip
         private Color grayColor = new Color(60, 60, 60);
 
 
-        public MultiplayerMode(Main main)
+        private MultiplayerMode()
         {
-
-            this.main = main;
 
             createServer = new ButtonV3();
             joinServer = new ButtonV3();

@@ -11,31 +11,11 @@ namespace BattleShip
 
         public SpriteBatch spriteBatch;
         private Main main;
-        private Menu menu;
-        private Play play;
-        private MultiplayerMode multiplayerMode;
-        private CreateServer createServer;
-        private JoinServer joinServer;
-        //private Settings settings;
-        //private MultiplayerMode multiplayerMode;
-        //private CreateServer createServer;
-        //private ConnectServer connectServer;
-        //private Multiplay multiplay;
 
-        public State(SpriteBatch spriteBatch, Menu menu, Play play, CreateServer createServer, MultiplayerMode multiplayerMode, JoinServer joinServer, /*Settings settings, Play play, MultiplayerMode multiplayerMode, CreateServer createServer, ConnectServer connectServer, Multiplay multiplay,*/ Main game)
+        public State(SpriteBatch spriteBatch, Main game)
         {
             this.spriteBatch = spriteBatch;
             this.main = game;
-            this.menu = menu;
-            this.play = play;
-            this.multiplayerMode = multiplayerMode;
-            this.createServer = createServer;
-            this.joinServer = joinServer;
-            //this.settings = settings;
-            //this.multiplayerMode = multiplayerMode;
-            //this.createServer = createServer;
-            //this.connectServer = connectServer;
-            //this.multiplay = multiplay;
         }
 
 
@@ -44,22 +24,22 @@ namespace BattleShip
             switch (state)
             {
                 case GameState.Menu:
-                    menu.Update(state, gameTime, screen);
+                    Menu.Instance.Update(state, gameTime, screen);
                     break;
                 //case GameState.Settings:
                 //    settings.Update(state, gameTime, screen, main);
                 //    break;
                 case GameState.Playing:
-                    play.Update(gameTime, screen);
+                    Play.Instance.Update(gameTime, screen);
                     break;
                 case GameState.CreateServer:
-                    createServer.Update(state, gameTime, screen);
+                    CreateServer.Instance.Update(state, gameTime, screen);
                     break;
                 case GameState.MultiplayerMode:
-                    multiplayerMode.Update(state, gameTime, screen);
+                    MultiplayerMode.Instance.Update(state, gameTime, screen);
                     break;
                 case GameState.ConnectToServer:
-                    joinServer.Update(state, gameTime, screen);
+                    JoinServer.Instance.Update(state, gameTime, screen);
                     break;
                 //case GameState.Multiplaying:
                 //    multiplay.Update(state, gameTime, screen);
@@ -83,22 +63,22 @@ namespace BattleShip
             switch (state)
             {
                 case GameState.Menu:
-                    menu.Draw(spriteBatch);
+                    Menu.Instance.Draw(spriteBatch);
                     break;
                 //case GameState.Settings:
                 //    settings.Draw(spriteBatch, gameTime);
                 //    break;
                 case GameState.Playing:
-                    play.Draw(spriteBatch, gameTime, screen);
+                    Play.Instance.Draw(spriteBatch, gameTime, screen);
                     break;
                 case GameState.CreateServer:
-                    createServer.Draw(spriteBatch);
+                    CreateServer.Instance.Draw(spriteBatch);
                     break;
                 case GameState.MultiplayerMode:
-                    multiplayerMode.Draw(spriteBatch);
+                    MultiplayerMode.Instance.Draw(spriteBatch);
                     break;
                 case GameState.ConnectToServer:
-                    joinServer.Draw(spriteBatch);
+                    JoinServer.Instance.Draw(spriteBatch);
                     break;
                 //case GameState.Multiplaying:
                 //    multiplay.Draw(spriteBatch, gameTime);
@@ -127,7 +107,7 @@ namespace BattleShip
                 case GameState.Settings:
                     break;
                 case GameState.Playing:
-                    play.DrawInCamera(spriteBatch, gameTime);
+                    Play.Instance.DrawInCamera(spriteBatch, gameTime);
                     break;
                 //case GameState.Multiplaying:
                 //    multiplay.DrawInCamera(spriteBatch, gameTime);

@@ -69,11 +69,6 @@ namespace BattleShip
         //private Handler handler;
 
         private State state;
-        private Menu menu;
-        private Play play;
-        private MultiplayerMode multiplayerMode;
-        private CreateServer createServer;
-        private JoinServer joinServer;
 
 
         public Main()
@@ -84,6 +79,7 @@ namespace BattleShip
 
 
             graphics.HardwareModeSwitch = false;
+            Window.AllowUserResizing = true;
 
         }
 
@@ -111,12 +107,7 @@ namespace BattleShip
             InitFont();
             LoadContent();
 
-            menu = new Menu(this);
-            play = new Play(this);
-            multiplayerMode = new MultiplayerMode(this);
-            createServer = new CreateServer(this);
-            joinServer = new JoinServer(this);
-            state = new State(spriteBatch, menu, play, createServer, multiplayerMode, joinServer, this);
+            state = new State(spriteBatch, this);
 
 
             base.Initialize();

@@ -18,6 +18,8 @@ namespace BatailleNavale
         public bool isPlaced;
         public double angle = 0;
 
+        public int PV;
+
         public ShipBase(Vector2 position) 
         {
             

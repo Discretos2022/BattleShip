@@ -11,7 +11,9 @@ namespace BattleShip
     class Menu
     {
 
-        private Main main;
+        private static readonly Lazy<Menu> _instance = new(() => new Menu()); 
+        public static Menu Instance => _instance.Value;
+
 
         private ButtonV3 Classique;
         private ButtonV3 Network;
@@ -26,10 +28,8 @@ namespace BattleShip
         private Color grayColor = new Color(60, 60, 60);
 
 
-        public Menu(Main main)
+        private Menu()
         {
-
-            this.main = main;
 
             Classique = new ButtonV3();
             Network = new ButtonV3();
@@ -72,6 +72,7 @@ namespace BattleShip
                 //Main.inLevel = false;
                 //Camera.Zoom = 1f;
                 Main.gameState = GameState.Playing;
+                Handler.Initialize();
 
             }
 
@@ -119,19 +120,19 @@ namespace BattleShip
             #endregion*/
 
 
-            #region QuitButton2
+            //#region QuitButton2
 
-            Quit.Update(gameTime, screen);
+            //Quit.Update(gameTime, screen);
 
-            if (Quit.IsSelected())
-                Quit.SetColor(Color.Gold, grayColor);
-            else
-                Quit.SetColor(Color.White, grayColor);
+            //if (Quit.IsSelected())
+            //    Quit.SetColor(Color.Gold, grayColor);
+            //else
+            //    Quit.SetColor(Color.White, grayColor);
 
-            if (Quit.IsCliqued())
-                main.QuitGame();
+            //if (Quit.IsCliqued())
+            //    main.QuitGame();
 
-            #endregion
+            //#endregion
 
 
             if (KeyInput.isSimpleClick(Keys.Up, Keys.Down) || GamePadInput.isSimpleClick(PlayerIndex.One, Buttons.DPadUp, Buttons.DPadDown))

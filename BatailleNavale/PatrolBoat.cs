@@ -21,6 +21,8 @@ namespace BatailleNavale
 
             center = new Vector2(0, 0);
 
+            PV = 2;
+
         }
 
         public override void Update(GameTime gameTime)

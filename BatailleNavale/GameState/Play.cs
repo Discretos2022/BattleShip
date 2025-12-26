@@ -1,9 +1,11 @@
 ﻿using BatailleNavale;
+using BattleShip.NetCore;
 using INPUT;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NetworkEngine_5._0.Client;
+using NetworkEngine_5._0.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +18,13 @@ namespace BattleShip
     public class Play
     {
 
-        private Main main;
+        private static readonly Lazy<Play> _instance = new(() => new Play());
+        public static Play Instance => _instance.Value;
 
-        private int[,] attackCase = new int[10, 10];
+        public int[,] attackCase = new int[10, 10];
         private int[,] shipsCase = new int[10, 10];
 
         private Rectangle[,] cases = new Rectangle[10, 10];
-
-        private List<ShipBase> shipsToPlace = new List<ShipBase>();
 
         private string textQueue = "place tes navires";
         private int textTime = 0;
@@ -31,9 +32,8 @@ namespace BattleShip
         private string textLCD = "";
 
 
-        public Play(Main main)
+        private Play()
         {
-            this.main = main;
 
             for (int i = 0; i < cases.GetLength(0); i++)
             {
@@ -43,12 +43,6 @@ namespace BattleShip
                 }
             }
 
-            shipsToPlace.Add(new AircraftCarrier(new Vector2(0, 0)));
-            shipsToPlace.Add(new Submarine(new Vector2(0, 0)));
-            shipsToPlace.Add(new Destroyer(new Vector2(0, 0)));
-            shipsToPlace.Add(new Destroyer(new Vector2(0, 0)));
-            shipsToPlace.Add(new PatrolBoat(new Vector2(0, 0)));
-
         }
 
         public void Update(GameTime gameTime, Screen screen)
@@ -56,12 +50,12 @@ namespace BattleShip
 
             Handler.Update(gameTime);
 
-            if (shipsToPlace.Count > 0)
+            if (Handler.shipsToPlace.Count > 0)
             {
                 int x = (int)((MouseInput.GetScreenPosition(screen).X - 20) / 64) * 64 + 20; //  - (int)(aircraftCarrier.GetCenter().X * 64)
                 int y = (int)((MouseInput.GetScreenPosition(screen).Y + 6 ) / 64) * 64 - 6;  //  - (int)(aircraftCarrier.GetCenter().Y * 64)
 
-                shipsToPlace[0].position = new Vector2(x, y);
+                Handler.shipsToPlace[0].position = new Vector2(x, y);
 
 
                 float PositionX = Main.ScreenWidth / 2 - (177 * 4 + 177 * 4 + 40) / 2;
@@ -71,7 +65,7 @@ namespace BattleShip
 
                 if (KeyInput.isSimpleClick(Keys.Right))
                 {
-                    shipsToPlace[0].RotateRight();
+                    Handler.shipsToPlace[0].RotateRight();
                 }
 
                 if (MouseInput.isSimpleClickLeft())
@@ -88,9 +82,9 @@ namespace BattleShip
                             if ((new Rectangle((int)pos2.X + (i + 1) * 64, (int)pos2.Y + (j + 1) * 64, 64, 64)).Intersects(MouseInput.GetRectangle(screen)))
                             {
 
-                                if (CanPlaceShip(shipsCase, shipsToPlace[0], i, j))
+                                if (CanPlaceShip(shipsCase, Handler.shipsToPlace[0], i, j))
                                 {
-                                    PlaceShip(shipsToPlace[0], i, j);
+                                    PlaceShip(Handler.shipsToPlace[0], i, j);
                                 }
 
                             }
@@ -104,22 +98,49 @@ namespace BattleShip
             }
 
 
-            if (MouseInput.isSimpleClickLeft())
+            if (MouseInput.isSimpleClickLeft() && IsAllShipArePlaced())
             {
                 for (int i = 0; i < cases.GetLength(0); i++)
                 {
                     for (int j = 0; j < cases.GetLength(1); j++)
                     {
+                        
                         if (cases[i, j].Intersects(MouseInput.GetRectangle(screen)))
                         {
-                            if (attackCase[i, j] == 0)
-                            { attackCase[i, j] = 1; Console.WriteLine("start 1 : " + i + " , " + j); }
 
-                            else if (attackCase[i, j] == 1)
-                            { attackCase[i, j] = 2; Console.WriteLine("start 2 : " + i + " , " + j); }
+                            // SetTextLCD("attaque en " + (i + 1) + "" + (char)('a' + (j)));
 
-                            else if (attackCase[i, j] == 2)
-                            { attackCase[i, j] = 0; Console.WriteLine("start 0 : " + i + " , " + j); }
+                            if (!NetPlay.IsMultiplaying)
+                            {
+
+                                if (attackCase[i, j] == 0)
+                                { attackCase[i, j] = 1; Console.WriteLine("start 1 : " + i + " , " + j); }
+
+                                else if (attackCase[i, j] == 1)
+                                { attackCase[i, j] = 2; Console.WriteLine("start 2 : " + i + " , " + j); }
+
+                                else if (attackCase[i, j] == 2)
+                                { attackCase[i, j] = 0; Console.WriteLine("start 0 : " + i + " , " + j); }
+
+                            }
+                            else
+                            {
+                                if (NetPlay.MyPlayerID() == 2 && Handler.playerTurn == 2)
+                                {
+                                    Handler.playerTurn = 1;
+                                    ClientSender.SendTarget(i, j);
+                                    SetTextLCD("attaque en " + (i + 1) + "" + (char)('a' + (j)));
+                                }
+
+                                if (NetPlay.MyPlayerID() == 1 && Handler.playerTurn == 1)
+                                {
+                                    Handler.playerTurn = 2;
+                                    ServerSender.SendTarget(i, j);
+                                    SetTextLCD("attaque en " + (i + 1) + "" + (char)('a' + (j)));
+                                }
+
+                            }
+
                         }
 
                     }
@@ -247,7 +268,7 @@ namespace BattleShip
 
             Handler.Draw(spriteBatch, gameTime);
 
-            if (shipsToPlace.Count > 0)
+            if (Handler.shipsToPlace.Count > 0)
             {
                 //int x = (int)((MouseInput.GetScreenPosition(screen).X - 20) / 64) * 64 + 20 - (int)(aircraftCarrier.GetCenter().X * 64);
                 //int y = (int)((MouseInput.GetScreenPosition(screen).Y + 6) / 64) * 64 - 6 - (int)(aircraftCarrier.GetCenter().Y * 64);
@@ -265,24 +286,24 @@ namespace BattleShip
                         if ((new Rectangle((int)pos.X + (i + 1) * 64, (int)pos.Y + (j + 1) * 64, 64, 64)).Intersects(MouseInput.GetRectangle(screen)))
                         {
 
-                            if (CanPlaceShip(shipsCase, shipsToPlace[0], i, j))
+                            if (CanPlaceShip(shipsCase, Handler.shipsToPlace[0], i, j))
                             {
-                                shipsToPlace[0].canPlace = true;
+                                Handler.shipsToPlace[0].canPlace = true;
                                 goto L_end;
                             }
                             else
-                                shipsToPlace[0].canPlace = false;
+                                Handler.shipsToPlace[0].canPlace = false;
 
                         }
                         else
-                            shipsToPlace[0].canPlace = false;
+                            Handler.shipsToPlace[0].canPlace = false;
 
                     }
                 }
 
             L_end:;
 
-                shipsToPlace[0].Draw(spriteBatch, gameTime);
+                Handler.shipsToPlace[0].Draw(spriteBatch, gameTime);
 
             }
 
@@ -391,8 +412,8 @@ namespace BattleShip
             int[,] sg = ship.GetShipCases();
 
             /// Ajoute le navire à la liste des navires placés
-            Handler.ships.Add(shipsToPlace[0]);
-            shipsToPlace[0].isPlaced = true;
+            Handler.ships.Add(Handler.shipsToPlace[0]);
+            Handler.shipsToPlace[0].isPlaced = true;
 
             for (int i = 0; i < sg.GetLength(1); i++)
             {
@@ -405,7 +426,7 @@ namespace BattleShip
                 }
             }
 
-            shipsToPlace.RemoveAt(0);
+            Handler.shipsToPlace.RemoveAt(0);
 
             if (IsAllShipArePlaced())
             {
@@ -413,14 +434,15 @@ namespace BattleShip
                 if (!Handler.isEnemyReady)
                     SetTextLCD("attente . . .");
 
-                ClientSender.SendAllShipsArePlaced();
+                if (NetPlay.IsMultiplaying && NetPlay.MyPlayerID() != 1)
+                    ClientSender.SendAllShipsArePlaced();
             }
 
         }
 
         public bool IsAllShipArePlaced()
         {
-            return shipsToPlace.Count == 0;
+            return Handler.shipsToPlace.Count == 0;
         }
 
 
@@ -429,6 +451,35 @@ namespace BattleShip
             textLCD = "";
             textQueue = text;
         }
+
+
+        public AttackResult Attack(int x, int y)
+        {
+
+            if (shipsCase[x, y] != 0)
+            {
+                Handler.ships[shipsCase[x, y] - 1].PV -= 1;
+
+                if (Handler.ships[shipsCase[x, y] - 1].PV == 0)
+                    return AttackResult.Sunk;
+                else
+                    return AttackResult.Hited;
+
+            }
+                
+            return AttackResult.Missed;
+
+        }
+
+
+        public enum AttackResult
+        {
+            Missed = 0,
+            Hited = 1,
+            Sunk = 2,
+        } 
+
+
 
     }
 }

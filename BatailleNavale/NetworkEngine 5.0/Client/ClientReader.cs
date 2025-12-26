@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace NetworkEngine_5._0.Client
 {
@@ -23,7 +24,65 @@ namespace NetworkEngine_5._0.Client
                 case NetPlay.PacketType.startGame:
 
                     Main.gameState = GameState.Playing;
-                    Handler.Initialize();
+
+                    break;
+
+                case NetPlay.PacketType.readyForBattle:
+
+                    Play.Instance.SetTextLCD("attention . . .");
+
+                    break;
+
+                case NetPlay.PacketType.chooseTarget:
+
+                    Play.Instance.SetTextLCD("choisir une cible");
+                    Handler.playerTurn = 2;
+
+                    break;
+
+                case NetPlay.PacketType.attackResult:
+
+                    string data = GetData(packet);
+
+                    Play.AttackResult result = (Play.AttackResult)int.Parse(data.Split(":")[0]);
+                    int x = int.Parse(data.Split(":")[1]);
+                    int y = int.Parse(data.Split(":")[2]);
+
+                    if (result == Play.AttackResult.Missed)
+                    {
+                        Play.Instance.SetTextLCD("cible rate");
+                        Play.Instance.attackCase[x, y] = 1;
+                    }
+                    else if (result == Play.AttackResult.Hited)
+                    {
+                        Play.Instance.SetTextLCD("cible touche");
+                        Play.Instance.attackCase[x, y] = 2;
+                    }
+                    else if (result == Play.AttackResult.Sunk)
+                    {
+                        Play.Instance.SetTextLCD("cible coule");
+                        Play.Instance.attackCase[x, y] = 2;
+                    }
+
+                    break;
+
+                case NetPlay.PacketType.target:
+
+                    data = GetData(packet);
+
+                    int targetX = int.Parse(data.Split(":")[0]);
+                    int targetY = int.Parse(data.Split(":")[1]);
+
+                    Play.Instance.SetTextLCD("attaque en " + (targetX + 1) + "" + (char)('a' + (targetY)));
+
+                    Thread.Sleep(3000);
+
+                    Play.AttackResult result2 = Play.Instance.Attack(targetX, targetY);
+
+                    ClientSender.SendAttackResult((int)result2, targetX, targetY);
+
+                    Play.Instance.SetTextLCD("choisir une cible");
+                    Handler.playerTurn = 2;
 
                     break;
 

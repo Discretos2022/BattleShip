@@ -16,7 +16,9 @@ namespace BattleShip
     class JoinServer
     {
 
-        private Main main;
+        private static readonly Lazy<JoinServer> _instance = new(() => new JoinServer());
+        public static JoinServer Instance => _instance.Value;
+
 
         private Color grayColor = new Color(60, 60, 60);
 
@@ -35,10 +37,8 @@ namespace BattleShip
         private Color stateTextColor = Color.White;
 
 
-        public JoinServer(Main main)
+        private JoinServer()
         {
-
-            this.main = main;
 
             textBoxPort = new TextBox();
             PortButton = new ButtonV3();
@@ -178,6 +178,7 @@ namespace BattleShip
                     stateText = string.Empty;
                     joinState = State.WaitPlayer;
                     NetPlay.IsMultiplaying = true;
+                    Handler.Initialize();
 
                 }
             }

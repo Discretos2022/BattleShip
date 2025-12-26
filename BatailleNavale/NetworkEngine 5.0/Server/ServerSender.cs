@@ -25,6 +25,36 @@ namespace NetworkEngine_5._0.Server
 
         }
 
+        public static void SendReadyForBattle()
+        {
+
+            string packet = CreateTCPpacket("", NetPlay.PacketType.readyForBattle);
+            Server.SendTCP(packet);
+
+        }
+
+        public static void SendChooseTarget()
+        {
+
+            string packet = CreateTCPpacket("", NetPlay.PacketType.chooseTarget);
+            Server.SendTCP(packet);
+
+        }
+
+        public static void SendAttackResult(int result, int x, int y)
+        {
+            string packet = CreateTCPpacket(result + ":" + x + ":" + y, NetPlay.PacketType.attackResult);
+            Server.SendTCP(packet);
+        }
+
+        public static void SendTarget(int x, int y)
+        {
+
+            string packet = CreateTCPpacket(x + ":" + y, NetPlay.PacketType.target);
+            Server.SendTCP(packet);
+
+        }
+
         //public static void SendOtherPlayerID(int otherID)
         //{
 

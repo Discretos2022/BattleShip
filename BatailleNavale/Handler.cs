@@ -17,7 +17,10 @@ namespace BattleShip
 
         public static List<ShipBase> ships = new List<ShipBase>();
 
+        public static List<ShipBase> shipsToPlace = new List<ShipBase>();
+
         public static bool isEnemyReady = false;
+        public static int playerTurn = 0;
 
         public static void Initialize()
         {
@@ -27,6 +30,12 @@ namespace BattleShip
 
             if (!NetPlay.IsMultiplaying)
                 isEnemyReady = true;
+
+            shipsToPlace.Add(new AircraftCarrier(new Vector2(0, 0)));
+            shipsToPlace.Add(new Submarine(new Vector2(0, 0)));
+            shipsToPlace.Add(new Destroyer(new Vector2(0, 0)));
+            shipsToPlace.Add(new Destroyer(new Vector2(0, 0)));
+            shipsToPlace.Add(new PatrolBoat(new Vector2(0, 0)));
 
         }
 

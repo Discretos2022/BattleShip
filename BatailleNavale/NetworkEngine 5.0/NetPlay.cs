@@ -38,6 +38,10 @@ namespace BattleShip.NetCore
             playerID = 1,
             startGame = 2,
             allShipsArePlaced = 3,
+            readyForBattle = 4,
+            chooseTarget = 5,
+            target = 6,
+            attackResult = 7,
         }
 
         public static int MyPlayerID()

@@ -22,6 +22,18 @@ namespace NetworkEngine_5._0.Client
             Client.SendTCP(packet);
         }
 
+        public static void SendTarget(int x, int y)
+        {
+            string packet = CreateTCPpacket(x + ":" + y, NetPlay.PacketType.target);
+            Client.SendTCP(packet);
+        }
+
+        public static void SendAttackResult(int result, int x, int y)
+        {
+            string packet = CreateTCPpacket(result + ":" + x + ":" + y, NetPlay.PacketType.attackResult);
+            Client.SendTCP(packet);
+        }
+
 
 
 
