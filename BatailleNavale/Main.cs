@@ -1,4 +1,5 @@
-﻿using INPUT;
+﻿using BatailleNavale.GameState;
+using INPUT;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -65,6 +66,8 @@ namespace BattleShip
 
         public static GameState gameState = GameState.Menu;
 
+        public StateManager stateManager;
+
 
         //private Handler handler;
 
@@ -108,6 +111,8 @@ namespace BattleShip
             LoadContent();
 
             state = new State(spriteBatch, this);
+
+            stateManager = new StateManager(new MainMenu(this));
 
 
             base.Initialize();
@@ -192,7 +197,9 @@ namespace BattleShip
 
             //}
 
-            state.Update(gameState, gameTime, screen, this);
+            // state.Update(gameState, gameTime, screen, this);
+
+            stateManager.Update(gameTime, screen);
 
 
             base.Update(gameTime);
@@ -210,7 +217,8 @@ namespace BattleShip
             render.Begin5(false, gameTime, spriteBatch, null);
             GraphicsDevice.Clear(new Color(200, 200, 200, 1));
 
-            state.DrawInCamera(spriteBatch, gameState, gameTime);
+            // state.DrawInCamera(spriteBatch, gameState, gameTime);
+            stateManager.DrawInCamera(spriteBatch, gameTime);
 
             //spriteBatch.Draw(Bounds, new Rectangle(0, 0, 400, 400), Color.White);
 
@@ -228,8 +236,8 @@ namespace BattleShip
             render.Begin5(false, gameTime, spriteBatch, null);
             GraphicsDevice.Clear(new Color(0, 0, 0, 0));
 
-            state.Draw(spriteBatch, gameState, gameTime, screen);
-
+            // state.Draw(spriteBatch, gameState, gameTime, screen);
+            stateManager.Draw(spriteBatch, gameTime, screen);
 
             spriteBatch.Draw(Cursor, new Vector2(MouseInput.GetRectangle(screen).X, MouseInput.GetRectangle(screen).Y), null, Color.White, 0f, Vector2.Zero, 1, SpriteEffects.None, 0f);
 
